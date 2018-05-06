@@ -31,11 +31,11 @@ def connect():
         cnx = mysql.connector.connect(**config)
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
         elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     else:
         return cnx
 
@@ -43,11 +43,11 @@ def connect():
 def create_database(db):
     connection = connect()
     c = connection.cursor()
-    print "Creating database '{}'".format(db)
+    print ("Creating database '{}'".format(db))
     try:
         c.execute("CREATE DATABASE {} DEFAULT CHARACTER SET 'utf8'".format(db))
     except mysql.connector.Error as err:
-        print "%s: %s" % (err.errno, err.msg)
+        print ("%s: %s" % (err.errno, err.msg))
     c.close()
     connection.close()
 
@@ -58,12 +58,12 @@ def show_all_tables(db):
     try:
         connection.database = db
     except mysql.connector.Error as err:
-        print "%s: %s" % (err.errno, err.msg)
+        print ("%s: %s" % (err.errno, err.msg))
     else:
         c.execute("SHOW TABLES")
         tables = c.fetchall()
-        print "Fetching all tables in database: %s" % db
-        print str(len(tables)) + " tables found"
+        print ("Fetching all tables in database: %s" % db)
+        print (str(len(tables)) + " tables found")
         return tables
     c.close()
     connection.close()
@@ -77,7 +77,7 @@ def get_column_names(db, table):
     try:
         connection.database = db
     except mysql.connector.Error as err:
-        print err
+        print (err)
         exit(err.errno)
     c.execute(query)
 
@@ -98,20 +98,20 @@ def select_column_from_table(db, table, column="*", limit="1000"):
         connection.database = db
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_BAD_DB_ERROR:
-            print "Database '%s' not found" % db
-            print "%s: %s" % (err.errno, err.msg)
+            print ("Database '%s' not found" % db)
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     items = []
     try:
-        print query
+        print (query)
         c.execute(query)
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_NO_SUCH_TABLE:
-            print "table: '%s' does not exist..." % table
-            print "%s: %s" % (err.errno, err.msg)
+            print ("table: '%s' does not exist..." % table)
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     else:
         for item in c:
             items.append(item)
@@ -129,20 +129,20 @@ def select_item_from_table(db, table, where):
         connection.database = db
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_BAD_DB_ERROR:
-            print "Database '%s' not found" % db
-            print "%s: %s" % (err.errno, err.msg)
+            print ("Database '%s' not found" % db)
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     items = []
     try:
-        print query
+        print (query)
         c.execute(query)
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_NO_SUCH_TABLE:
-            print "table: '%s' does not exist..." % table
-            print "%s: %s" % (err.errno, err.msg)
+            print ("table: '%s' does not exist..." % table)
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     else:
         for item in c:
             items.append(item)
@@ -161,29 +161,29 @@ def create_table(db, table_name, table_info, overwrite=False):
     try:
         connection.database = db
     except mysql.connector.Error as err:
-        print "%s: %s" % (err.errno, err.msg)
+        print ("%s: %s" % (err.errno, err.msg))
     else:
         while try_again:
             try:
                 try_again = False
-                print "Creating table '{}': ".format(table_name)
+                print ("Creating table '{}': ".format(table_name))
                 c.execute(query)
             except mysql.connector.Error as err:
                 if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                     if overwrite is True:
-                        print "Table '%s' exists." % table_name
+                        print ("Table '%s' exists." % table_name)
                         drop_table(db, table_name)
                         try_again = True
                     else:
-                        print "%s: %s" % (err.errno, err.msg)
+                        print ("%s: %s" % (err.errno, err.msg))
                         print ("Table: '%s' already exists. If you wish to overwrite this anyway, "
                                "specify 'overwrite=True' \n"
                                "WARNING!!! - Doing so will cause all data in this table to be deleted"
                                " and cannot be recovered!!!" % table_name)
                 else:
-                    print "%s: %s" % (err.errno, err.msg)
+                    print ("%s: %s" % (err.errno, err.msg))
             else:
-                print "OK"
+                print ("OK")
     c.close()
     connection.close()
 
@@ -196,19 +196,19 @@ def drop_table(db, table_name):
     try:
         connection.database = db
     except mysql.connector.Error as err:
-        print "%s: %s" % (err.errno, err.msg)
+        print ("%s: %s" % (err.errno, err.msg))
     else:
         try:
-            print "Dropping table '{}': ".format(table_name)
+            print ("Dropping table '{}': ".format(table_name))
             c.execute(query)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_BAD_TABLE_ERROR:
                 print ("Table: '%s' not found." % table_name)
-                print "%s: %s" % (err.errno, err.msg)
+                print ("%s: %s" % (err.errno, err.msg))
             else:
-                print "%s: %s" % (err.errno, err.msg)
+                print ("%s: %s" % (err.errno, err.msg))
         else:
-                print "OK"
+                print ("OK")
         c.close()
         connection.close()
 
@@ -223,19 +223,19 @@ def truncate_table(db, table, safe=True):
     try:
         connection.database = db
     except mysql.connector.Error as err:
-        print "%s: %s" % (err.errno, err.msg)
+        print ("%s: %s" % (err.errno, err.msg))
     try:
-        print "Truncating '{}' table ".format(table)
+        print ("Truncating '{}' table ".format(table))
         c.execute(query)
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_NO_SUCH_TABLE:
-            print "table: '%s' does not exist..." % table
-            print "%s: %s" % (err.errno, err.msg)
+            print ("table: '%s' does not exist..." % table)
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     else:
-        print "OK"
-    print "."
+        print ("OK")
+    print (".")
     c.close()
     connection.close()
 
@@ -248,8 +248,8 @@ def get_policies(db):
         connection.database = db
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_BAD_DB_ERROR:
-            print "%s: %s" % (err.errno, err.msg)
-    print "Retrieving Policies..."
+            print ("%s: %s" % (err.errno, err.msg))
+    print ("Retrieving Policies...")
     policies = []
 
     try:
@@ -259,11 +259,11 @@ def get_policies(db):
         connection.commit()
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_DUP_ENTRY:
-            print "POLICIES NOT RESTORED - Duplicate entry found. Verify truncate operation was successful"
+            print ("POLICIES NOT RESTORED - Duplicate entry found. Verify truncate operation was successful")
         else:
-            print err.msg
+            print (err.msg)
     else:
-        print "OK"
+        print ("OK")
     c.close()
     connection.close()
     # Close DB and connection
@@ -272,16 +272,16 @@ def get_policies(db):
 def drop_db(db):
     connection = connect()
     c = connection.cursor()
-    print "Dropping database '{}'...".format(db)
+    print ("Dropping database '{}'...".format(db))
     try:
         c.execute("DROP DATABASE `{}` ".format(db))
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_DB_DROP_EXISTS:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     else:
-        print "OK"
+        print ("OK")
     c.close()
     connection.close()
 
@@ -289,7 +289,7 @@ def drop_db(db):
 def delete_entry(db, table, column, value):
     connection = connect()
     c = connection.cursor()
-    print "Deleting record from database '{}'...".format(db)
+    print ("Deleting record from database '{}'...".format(db))
     try:
         connection.database = db
     except mysql.connector.Error as err:
@@ -297,18 +297,18 @@ def delete_entry(db, table, column, value):
             create_database(db)
             connection.database = db
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     try:
         c.execute("DELETE FROM `" + table + "` WHERE `" + column + "` = '" + value + "'")
         connection.commit()
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_EVENT_CANNOT_DELETE:
-            print "Failed to Delete record - Not found"
-            print "%s: %s" % (err.errno, err.msg)
+            print ("Failed to Delete record - Not found")
+            print ("%s: %s" % (err.errno, err.msg))
         else:
-            print "%s: %s" % (err.errno, err.msg)
+            print ("%s: %s" % (err.errno, err.msg))
     else:
-        print "OK"
+        print ("OK")
     c.close()
     connection.close()
 
